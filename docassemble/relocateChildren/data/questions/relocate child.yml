@@ -1,0 +1,279 @@
+---
+metadata:
+  title: |
+    Relocate minor children
+  short title: |
+    Relocate minor children
+  description: |
+    Remove Minor Child from the Commonwealth Under G
+  authors:
+    - name: Jeff and Caroline
+      organization: MLH
+  revision_date: 2018-06-11
+---
+sections:
+  - Introduction
+  - About you:
+    - Address
+    - Family
+    - Case
+  - Relocation
+  - Conclusion
+---
+features:
+  navigation: True
+  progress bar: True
+---
+modules:
+  - docassemble.base.util
+  - docassemble.base.core
+---
+mandatory: True
+objects:
+  - child: DADict
+  - user: Individual
+  - user.case_type: |
+      DADict.using(object_type=Organization,
+                   auto_gather=False,
+                   complete_attribute='complete')
+---
+code: |
+  user.case_type.new(user.judgment.true_values())
+  user.case_type.gathered = True
+---
+mandatory: True
+code: |
+  child.object_type = DAObject
+  child.there_are_any = True
+---
+mandatory: True
+code: |
+  menu_items = [ action_menu_item('Roadmap', 'road_map') ]
+  menu_items = [ action_menu_item('Review Answers', 'review_answers') ]
+---
+initial: True
+code: |
+  if returning_user(minutes=0.5):
+    welcome_back
+---
+mandatory: True
+question: |
+  Welcome to the interview built by MLH!
+subquestion: |
+  If you are not on a
+  smartphone-sized device,
+  you should see a navigation
+  bar to the left.
+  
+  To see what a user would
+  see after returning to
+  the interview after a period
+  of absence, try waiting
+  thirty seconds, then
+  [click into the
+  interview](${ interview_url(local=True) }).
+
+  In addition, there is a similar
+  screen available on the Menu in the
+  upper-right, under "Roadmap."
+field: sees_nav_bar
+decoration: mylogo
+---
+auto terms:
+  interview: |
+    An online conversation to collect data in order to generate a letter for you.
+---
+terms:
+  zombie pigwoman: |
+    A harmless creature who carries a gold
+    sword.
+---
+mandatory: True
+question: |
+  Hello ${ user.name }! My name is Avitor :avitor:, a  {zombie pigwoman}. I am going to ask you some questions.
+  Please follow the prompt on the screen, and enter the required date.
+  Once you are thru, you will get a letter with your answers in it.
+
+field: intro_to_about_you
+decoration: newlogo
+section: About you
+---
+mandatory: True
+question: |
+  You have successfully completed the interview. You entered the following data:
+  
+  You live in ${ county } county, at this street address ${ plaintiff_address },
+  your partener's name is ${ other_party_name }.   You have ${ child.number_as_word() }
+  ${ child.as_noun('child') }, 
+  % for item in child:
+  your child ${ item } has a birth day on ${ child[item].birthdate }
+    % if loop.last:
+	   . 
+	  % else:
+	   ,
+	  % endif  
+  % endfor
+  
+  You filed a case of ${ user.case_type } on ${ case_date }, attained a cusdody type of 
+  ${ custody_type }.
+  
+  You plan to move to ${ relocation_city } in ${ relocation_state } with your child,
+  where the child can live with raletives like ${ relative_types }, and the school 
+  there is ${ school_condition } for your child. You want to 
+  ${ housing_type } a living space.
+
+subquestion: |
+  You can user the "Back" button to revise your input, or 
+  just download the letter from this screen and modify it as you see fit. 
+
+  Thank you for using our interview software, and good luck with your case!
+
+attachment:
+  name: A letter for ${ user.name }
+  filename: relocate child
+  docx template file: relocate-child.docx
+
+buttons:
+  - End the Interview: leave
+progress: 100
+section: Conclusion
+---
+images:
+  avitor: Fatima.png
+  mylogo: logo_mlh.gif
+---
+question: |
+  What is your name?
+fields:
+  - Your First Name: user.name.first  
+  - Your First Name: user.name.last  
+---
+code:
+  plaintiff_name = user.name.first + ' ' + user.name.last
+---
+question: |
+  What is your address?
+fields:
+  - County name: county
+  - Street Address in Massachusetts: plaintiff_address 
+section: Address
+---
+question: |
+  What is your paterner's name?
+fields: 
+  - Other Party's Name: other_party_name
+help: |
+  Other Party: The person you raised your child and settled a 
+  custody case with.
+section: Family
+---
+question: |
+  What is the name of your child?
+fields:
+  - Child name: child.new_item_name
+---
+question: |
+  Describe your child ${ i }.
+fields:
+  - Birth date: child[i].birthdate
+    datatype: date    
+---
+question: |
+  So far, you have told me about your
+  ${ child }.  Do you have any other
+  child?
+yesno: child.there_is_another
+---
+question: |
+  Tell me about your case.
+fields:
+  - Case Date: case_date
+    datatype: date
+  - Custody type: user.judgment
+    datatype: checkboxes
+    choices:
+      - Divorce: divorce
+      - Custody: custody
+      - Paternity: paternity
+      - Separate support: separate_support
+section: Case
+---
+question: |
+  Tell me about your custody type.
+fields:
+  - Custody type: custody_type
+    datatype: radio
+    choices:
+      - Sole: sole
+      - Joint: joint
+      - Physical: physical
+---
+code: |
+  relocation_state = state_name(reloc_state)
+---
+question: |
+  Where do you plan to move to?
+fields:
+  - Relocation city: relocation_city
+  - Relocation state: reloc_state  
+    code: states_list()
+  - How to attain a living space: housing_type 
+    datatype: radio
+    choices:
+      - Rent: rent
+      - purchase: purchase
+section: Relocation
+---
+question: |
+  What about relatives and school condition?
+fields:
+  - Relative types: relative_types
+    hint: e.g., uncle, grandma
+  - School condition: school_condition
+    datatype: radio
+    choices:
+      - Suitable: suitable
+      - Better: better
+progress: 80
+
+---
+event: welcome_back
+question: |
+  Welcome back!
+subquestion: |
+  You are currently in the
+  **${ nav.get_section(display=True) }**
+  section.
+
+  ${ nav }
+
+  Press "Continue" to pick up
+  where you left off.
+buttons:
+  Continue: continue
+---
+event: road_map
+question: |
+  Roadmap
+subquestion: |
+  You are currently in the
+  **${ nav.get_section(display=True) }**
+  section.
+
+  ${ nav }
+
+  Press "Continue" to resume the
+  interview.
+buttons:
+  Continue: continue
+---
+interview help:
+  label: More info
+  heading: More information about this web site
+  content: |
+    If you are not sure what the right answer is, provide
+    your best guess.
+    
+    You are answering these questions under the pains and
+    penalties of perjury.  Your answers will be 
+    shared with the special prosecutor.
