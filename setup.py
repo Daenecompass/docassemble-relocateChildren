@@ -45,9 +45,9 @@ def find_package_data(where='.', package='', exclude=standard_exclude, exclude_d
     return out
 
 setup(name='docassemble.relocateChildren',
-      version='v1.0.1',
+      version='v1.0.2',
       description=('A docassemble extension.'),
-      long_description='Intitial commit v1.0.0 on 7/23/2018:\r\n\r\nThis interview is a work-in-progress sample of exploring docassemble\'s basic \r\nfunctionality. It is not "ready", but is checked in as is in the hope that it \r\nmight assist other team members in their initial learning.\r\n\r\nv1.0.1\r\nchanged title and short title from Relocate to Remove.',
+      long_description='Intitial commit v1.0.0 on 7/23/2018:\r\n\r\nThis interview is a work-in-progress sample of exploring docassemble\'s basic \r\nfunctionality. It is not "ready", but is checked in as is in the hope that it \r\nmight assist other team members in their initial learning.\r\n\r\nv1.0.1\r\nchanged title and short title from Relocate to Remove.\r\n\r\nv1.0.2\r\nfixed typos, added select list for counties, edited summary of answers at the end of the interview.',
       long_description_content_type='text/markdown',
       author='System Administrator',
       author_email='admin@admin.com',
