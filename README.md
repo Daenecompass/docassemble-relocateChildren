@@ -6,3 +6,6 @@ might assist other team members in their initial learning.
 
 v1.0.1
 changed title and short title from Relocate to Remove.
+
+v1.0.2
+fixed typos, added select list for counties, edited summary of answers at the end of the interview.

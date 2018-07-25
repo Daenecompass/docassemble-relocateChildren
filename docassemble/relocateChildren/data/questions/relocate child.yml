@@ -102,25 +102,28 @@ mandatory: True
 question: |
   You have successfully completed the interview. You entered the following data:
   
-  You live in ${ county } county, at this street address ${ plaintiff_address },
-  your partener's name is ${ other_party_name }.   You have ${ child.number_as_word() }
-  ${ child.as_noun('child') }, 
+  You live at ${ plaintiff_address }, in ${ county }.
+  
+  ${ other_party_name } is the name of your ${ child.as_noun('child') }'s other parent.   
+  
+  You have ${ child.number_as_word() } ${ child.as_noun('child') }:  
   % for item in child:
-  your child ${ item } has a birth day on ${ child[item].birthdate }
+  ${ item }'s birthday is ${ child[item].birthdate }
     % if loop.last:
-	   . 
+	  . 
 	  % else:
-	   ,
+	  ,
 	  % endif  
   % endfor
   
-  You filed a case of ${ user.case_type } on ${ case_date }, attained a cusdody type of 
-  ${ custody_type }.
+  You filed a ${ user.case_type } case on ${ case_date }, and you have ${ custody_type } custody.
   
-  You plan to move to ${ relocation_city } in ${ relocation_state } with your child,
-  where the child can live with raletives like ${ relative_types }, and the school 
-  there is ${ school_condition } for your child. You want to 
-  ${ housing_type } a living space.
+  You plan to move to ${ relocation_city }, ${ relocation_state } with your ${ child.as_noun('child') },
+  where the ${ child.as_noun('child') } can live with you and their ${ relative_types }.
+  
+  The school there is ${ school_condition } for your ${ child.as_noun('child') }. 
+  
+  You plan to ${ housing_type } a living space.
 
 subquestion: |
   You can user the "Back" button to revise your input, or 
@@ -146,7 +149,7 @@ question: |
   What is your name?
 fields:
   - Your First Name: user.name.first  
-  - Your First Name: user.name.last  
+  - Your Last Name: user.name.last  
 ---
 code:
   plaintiff_name = user.name.first + ' ' + user.name.last
@@ -154,12 +157,27 @@ code:
 question: |
   What is your address?
 fields:
+  - Street Address in Massachusetts: plaintiff_address
   - County name: county
-  - Street Address in Massachusetts: plaintiff_address 
+    choices:
+      - Barnstable County
+      - Berkshire County
+      - Bristol County
+      - Dukes County
+      - Essex County
+      - Franklin County
+      - Hampden County
+      - Hampshire County
+      - Middlesex County
+      - Nantucket County
+      - Norfolk County
+      - Plymouth County
+      - Suffolk County
+      - Worcester County
 section: Address
 ---
 question: |
-  What is your paterner's name?
+  What is your partner's name?
 fields: 
   - Other Party's Name: other_party_name
 help: |
@@ -173,14 +191,14 @@ fields:
   - Child name: child.new_item_name
 ---
 question: |
-  Describe your child ${ i }.
+  What is ${ i }'s birthdate?
 fields:
   - Birth date: child[i].birthdate
     datatype: date    
 ---
 question: |
-  So far, you have told me about your
-  ${ child }.  Do you have any other
+  So far, you have told me about 
+  ${ child }.  Do you have another
   child?
 yesno: child.there_is_another
 ---
@@ -212,7 +230,7 @@ code: |
   relocation_state = state_name(reloc_state)
 ---
 question: |
-  Where do you plan to move to?
+  Where do you plan to move?
 fields:
   - Relocation city: relocation_city
   - Relocation state: reloc_state  
